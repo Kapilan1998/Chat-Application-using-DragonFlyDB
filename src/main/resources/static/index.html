@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0">
+    <title>Spring Boot WebSocket Chat Application</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        #username-page, #chat-page {
+            margin-top: 100px;
+        }
+
+        #username-page form, #chat-page .col-md-8 {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #9face6;
+        }
+
+        .form-control:focus {
+            border-color: #74ebd5;
+            box-shadow: 0 0 8px #74ebd5;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #56ab2f, #a8e063); /* Green gradient */
+            border: none;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #a8e063, #56ab2f);
+        }
+
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #chat {
+            background: #fdfdfd;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        #message {
+            border-radius: 10px 0 0 10px;
+            border-right: none;
+        }
+
+        .input-group-append .btn {
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* Scrollbar styling */
+        #chat::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #chat::-webkit-scrollbar-thumb {
+            background: #9face6;
+            border-radius: 10px;
+        }
+
+        #chat::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* System message styles (JOIN/LEAVE) */
+        .system-message {
+            display: inline-block;
+            background-color: #e1f5fe; /* Light blue */
+            color: #0277bd; /* Darker blue */
+            padding: 6px 16px;
+            border-radius: 50px;
+            margin: 10px auto;
+            font-size: 0.9em;
+            font-weight: 500;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .system-leave {
+            background-color: #ffebee; /* Light red */
+            color: #c62828; /* Dark red */
+        }
+
+
+
+    </style>
+</head>
+<body>
+<!-- Username Page -->
+<div id="username-page" class="container">
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <form id="usernameForm" name="usernameForm">
+                <h3 class="text-center mb-4">Enter Chat</h3>
+                <div class="form-group">
+                    <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Start Chatting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Page -->
+<div id="chat-page" class="container d-none">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="text-center">Spring Boot WebSocket Chat Application</h2>
+            <div id="chat" class="border rounded p-3 mb-3" style="height: 300px; overflow-y: scroll;">
+                <!-- Chat messages will appear here -->
+            </div>
+            <form id="messageForm" name="messageForm">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var stompClient = null;
+    var username = null;
+
+    function connect(event) {
+        username = $("#name").val().trim();
+
+        if (username) {
+            var socket = new SockJS('/chat-app');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, onConnected, onError);
+        }
+        event.preventDefault();
+    }
+
+    function onConnected() {
+        // Subscribe to the Public Topic
+        stompClient.subscribe('/topic/public', onMessageReceived);
+
+        // Tell your username to the server
+        stompClient.send("/app/chat.addUser",
+            {},
+            JSON.stringify({userName: username, messageType: 'JOIN'})
+        )
+
+        $("#username-page").addClass('d-none');
+        $("#chat-page").removeClass('d-none');
+    }
+
+    function onError(error) {
+        console.log('Could not connect to WebSocket server. Please refresh this page to try again!');
+    }
+
+    function sendMessage(event) {
+        var messageContent = $("#message").val().trim();
+        if(messageContent && stompClient) {
+            var chatMessage = {
+                userName: username,
+                message: messageContent,
+                messageType: 'CHAT'
+            };
+            stompClient.send("/app/chat.sendChatMessage", {}, JSON.stringify(chatMessage));
+            $("#message").val('');
+        }
+        event.preventDefault();
+    }
+
+    function onMessageReceived(payload) {
+        var message = JSON.parse(payload.body);
+        var messageElement = $('<div>');
+
+        if(message.messageType === 'JOIN') {
+            messageElement.addClass('text-center system-message');
+            messageElement.text(message.message);
+        } else if (message.messageType === 'LEAVE') {
+            messageElement.addClass('text-center system-message system-leave');
+            messageElement.text(message.message);
+        } else {
+            messageElement.append('<strong>' + message.userName + ': </strong>');
+            messageElement.append(message.message);
+        }
+
+        $("#chat").append(messageElement);
+        $("#chat").scrollTop($("#chat")[0].scrollHeight);
+    }
+
+    $(document).ready(function() {
+        $("#usernameForm").on('submit', connect);
+        $("#messageForm").on('submit', sendMessage);
+    });
+</script>
+</body>
+</html>
