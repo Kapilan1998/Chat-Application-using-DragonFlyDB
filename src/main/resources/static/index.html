@@ -1,136 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <meta name="viewport" content="width=device-width, minimum-scale=1.0">
     <title>Spring Boot WebSocket Chat Application</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-        }
-
-        #username-page, #chat-page {
-            margin-top: 100px;
-        }
-
-        #username-page form, #chat-page .col-md-8 {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .form-control {
-            border-radius: 10px;
-            border: 2px solid #9face6;
-        }
-
-        .form-control:focus {
-            border-color: #74ebd5;
-            box-shadow: 0 0 8px #74ebd5;
-        }
-
-        .btn-primary {
-            background: linear-gradient(90deg, #56ab2f, #a8e063); /* Green gradient */
-            border: none;
-            border-radius: 10px;
-            transition: 0.3s;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(90deg, #a8e063, #56ab2f);
-        }
-
-
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        #chat {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(236, 239, 255, 0.8));
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.1);
-            height: 300px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding: 15px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* Chat message style */
-        #chat div {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px 15px;
-            border-radius: 15px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            max-width: 75%;
-            word-wrap: break-word;
-        }
-
-        /* Differentiate user messages (optional) */
-        #chat div strong {
-            color: #4a4a4a;
-        }
-
-        #message {
-            border-radius: 10px 0 0 10px;
-            border-right: none;
-        }
-
-        .input-group-append .btn {
-            border-radius: 0 10px 10px 0;
-        }
-
-        /* Scrollbar styling */
-        #chat::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        #chat::-webkit-scrollbar-thumb {
-            background: #9face6;
-            border-radius: 10px;
-        }
-
-        #chat::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        /* System message styles (JOIN/LEAVE) */
-        .system-message {
-            display: inline-block;
-            background-color: #e1f5fe; /* Light blue */
-            color: #0277bd; /* Darker blue */
-            padding: 6px 16px;
-            border-radius: 50px;
-            margin: 10px auto;
-            font-size: 0.9em;
-            font-weight: 500;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-
-        .system-leave {
-            background-color: #ffebee; /* Light red */
-            color: #c62828; /* Dark red */
-        }
-
-
-
-    </style>
 </head>
 <body>
 <!-- Username Page -->
@@ -155,7 +34,7 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h2 class="text-center">Spring Boot WebSocket Chat Application</h2>
-            <div id="chat" class="border rounded p-3 mb-3" style="height: 300px; overflow-y: scroll;">
+            <div id="chat" class="border rounded p-3 mb-3" style="height: 650px; overflow-y: scroll;">
                 <!-- Chat messages will appear here -->
             </div>
             <form id="messageForm" name="messageForm">
