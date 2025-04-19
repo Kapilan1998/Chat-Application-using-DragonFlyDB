@@ -17,7 +17,7 @@
     <div class="row">
         <div class="col-md-4 offset-md-4">
             <form id="usernameForm" name="usernameForm">
-                <h3 class="text-center mb-4">Enter Chat</h3>
+                <h3 class="text-center mb-4">Enter User name</h3>
                 <div class="form-group">
                     <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
                 </div>
@@ -34,7 +34,7 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h2 class="text-center">Spring Boot WebSocket Chat Application</h2>
-            <div id="chat" class="border rounded p-3 mb-3" style="height: 650px; overflow-y: scroll;">
+            <div id="chat" class="border rounded p-3 mb-3" style="height: 500px; overflow-y: scroll;">
                 <!-- Chat messages will appear here -->
             </div>
             <form id="messageForm" name="messageForm">
@@ -99,38 +99,31 @@
     }
 
 
-        function onMessageReceived(payload) {
-            var message = JSON.parse(payload.body);
-            var messageElement = $('<div>');
+    function onMessageReceived(payload) {
+        var message = JSON.parse(payload.body);
+        var messageElement = $('<div>');
 
-            if (message.messageType === 'JOIN') {
-                messageElement.addClass('text-center system-message');
-                messageElement.text(message.message);
-            } else if (message.messageType === 'LEAVE') {
-                messageElement.addClass('text-center system-message system-leave');
-                messageElement.text(message.message);
-            } else if (message.messageType === 'CHAT') {
-                messageElement.html('<strong>' + message.userName + ':</strong> ' + message.message);
+        if (message.messageType === 'JOIN') {
+            messageElement.addClass('text-center system-message');
+            messageElement.text(message.message);
+        } else if (message.messageType === 'LEAVE') {
+            messageElement.addClass('text-center system-message system-leave');
+            messageElement.text(message.message);
+        } else if (message.messageType === 'CHAT') {
+            messageElement.html('<strong>' + message.userName + ':</strong> ' + message.message);
 
-                // Right-align messages sent by the current user
-                if (message.userName === username) {
-                    messageElement.css({
-                        alignSelf: 'flex-end',
-                        backgroundColor: '#d1f7c4',
-                        textAlign: 'right'
-                    });
-                } else {
-                    messageElement.css({
-                        alignSelf: 'flex-start',
-                        backgroundColor: '#ffffff',
-                        textAlign: 'left'
-                    });
-                }
+            // Add class based on whether it's the current user
+            if (message.userName === username) {
+                messageElement.addClass('user-message');
+            } else {
+                messageElement.addClass('other-message');
             }
+        }
 
         $("#chat").append(messageElement);
         $("#chat").scrollTop($("#chat")[0].scrollHeight);
     }
+
 
     $(document).ready(function() {
         $("#usernameForm").on('submit', connect);
