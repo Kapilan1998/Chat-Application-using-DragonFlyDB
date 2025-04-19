@@ -50,10 +50,10 @@ h2 {
 }
 
 #chat {
-    height: 500px;
+    height: 650px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
-    background-size: contain; /* <-- fits whole image inside the container */
+    background-size: cover; /* <-- fits whole image inside the container */
     background-position: center;
     background-repeat: no-repeat;
     backdrop-filter: blur(12px);
@@ -131,7 +131,8 @@ h2 {
     padding: 10px 20px;
     border-radius: 30px;
     font-size: 0.95em;
-    font-weight: 500;
+    font-weight: 700;
+    font-style: italic;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     animation: floatIn 0.5s ease-out;
@@ -140,6 +141,8 @@ h2 {
 .system-leave {
     background-color: #ffe5e5;
     color: #b71c1c;
+    font-weight: 700;
+    font-style: italic;
 }
 
 /* Animations */
