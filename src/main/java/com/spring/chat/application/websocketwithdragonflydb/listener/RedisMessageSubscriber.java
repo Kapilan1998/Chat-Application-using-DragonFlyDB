@@ -19,11 +19,16 @@ public class RedisMessageSubscriber implements MessageListener {
     private final ObjectMapper objectMapper;
     private final SimpMessageSendingOperations simpMessageSendingOperations;
 
+    // Method triggered whenever a new message is published to the Redis topic
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        // Deserialize the raw Redis message body into a String (originally sent by redisTemplate.convertAndSend)
         String publishedMessage = redisTemplate.getStringSerializer().deserialize(message.getBody());
         try {
-            ChatMessageDto chatMessageDto = objectMapper.readValue(publishedMessage, ChatMessageDto.class);
+            // Parse the JSON string into a ChatMessageDto object
+             ChatMessageDto chatMessageDto = objectMapper.readValue(publishedMessage, ChatMessageDto.class);
+
+            // Send the ChatMessageDto to all WebSocket clients subscribed to '/topic/public'
             simpMessageSendingOperations.convertAndSend("/topic/public", chatMessageDto);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
