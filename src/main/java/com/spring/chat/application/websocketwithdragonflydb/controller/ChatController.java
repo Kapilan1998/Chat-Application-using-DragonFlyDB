@@ -14,35 +14,36 @@ import org.springframework.stereotype.Controller;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+// Marks this class as a Spring MVC Controller (for handling WebSocket messages here)
 @Controller
-@RequiredArgsConstructor
+@RequiredArgsConstructor        // Generates a constructor automatically for all final fields
 @Slf4j
 public class ChatController {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final ChannelTopic channelTopic;
+  private final RedisTemplate<String, Object> redisTemplate;
+  private final ChannelTopic channelTopic;
 
-    // send message to client
-    @MessageMapping("/chat.sendChatMessage")
-    public ChatMessageDto sendChatMessage(@Payload ChatMessageDto chatMessageDto) {
-        chatMessageDto.setTimeStamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessageDto);
-        return chatMessageDto;
-    }
+  // send message to client
+  @MessageMapping("/chat.sendChatMessage")
+  public ChatMessageDto sendChatMessage(@Payload ChatMessageDto chatMessageDto) {
+    chatMessageDto.setTimeStamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessageDto);
+    return chatMessageDto;
+  }
 
 
-    // add users to our application
-    @MessageMapping("/chat.addUser")
-    public ChatMessageDto addUser(@Payload ChatMessageDto chatMessageDto, SimpMessageHeaderAccessor headerAccessor) {
-        // get user name from chatMessage object and add it to websocket session
-headerAccessor.getSessionAttributes().put("username",chatMessageDto.getUserName());
-chatMessageDto.setMessageType(MessageType.JOIN);
-chatMessageDto.setMessage(chatMessageDto.getUserName()+" joined the chat");
-chatMessageDto.setTimeStamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-log.info("User joined the chat"+ chatMessageDto.getUserName());
+  // add users to our application
+  @MessageMapping("/chat.addUser")
+  public ChatMessageDto addUser(@Payload ChatMessageDto chatMessageDto, SimpMessageHeaderAccessor headerAccessor) {
+    // get user name from chatMessage object and add it to websocket session
+    headerAccessor.getSessionAttributes().put("username", chatMessageDto.getUserName());
+    chatMessageDto.setMessageType(MessageType.JOIN);
+    chatMessageDto.setMessage(chatMessageDto.getUserName() + " joined the chat");
+    chatMessageDto.setTimeStamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    log.info("User joined the chat" + chatMessageDto.getUserName());
 
-        // send the chat message back to client with Message type as join
-        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessageDto);
-        return chatMessageDto;
-    }
+    // send the chat message back to client with Message type as join
+    redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessageDto);
+    return chatMessageDto;
+  }
 }
