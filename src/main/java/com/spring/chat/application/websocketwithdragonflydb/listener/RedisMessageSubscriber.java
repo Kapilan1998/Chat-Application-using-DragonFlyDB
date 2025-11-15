@@ -1,7 +1,6 @@
 package com.spring.chat.application.websocketwithdragonflydb.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.chat.application.websocketwithdragonflydb.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
