@@ -1,0 +1,19 @@
+# Maven build output
+target/
+
+# IDE settings
+.idea/
+*.iml
+
+# OS files
+*.log
+*.tmp
+
+# Maven wrapper (optional)
+.mvn/
+
+# Docs not needed in image
+HELP.md
+
+# Docker compose is not needed inside image
+docker-compose.yaml
