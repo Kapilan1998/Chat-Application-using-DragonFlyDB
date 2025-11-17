@@ -9,7 +9,6 @@ pipeline {
         DOCKER_REGISTRY = 'docker.io'                       // Docker registry
         DOCKER_IMAGE = 'kapilan1998/chat-image'            // Docker image name
         IMAGE_TAG = '1.0'                                  // Docker image tag
-        GIT_CREDENTIALS_ID = 'github-credentials'          // Jenkins Git credentials (already used in checkout)
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'    // Docker Hub credentials
     }
 
