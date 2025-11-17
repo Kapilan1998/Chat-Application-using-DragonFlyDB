@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 @ExtendWith(MockitoExtension.class)
 class ChatControllerTest {
@@ -20,14 +22,13 @@ class ChatControllerTest {
 
     @Mock
     ChannelTopic channelTopic;
-    @Mock
-    RedisTemplate<String, Object> redisTemplate;
+
 
     @Test
     void sendChatMessage() {
         ChatMessageDto chatMessageDto = new ChatMessageDto();
         Mockito.when(channelTopic.getTopic()).thenReturn("sendChatMessage");
-        chatController.sendChatMessage(chatMessageDto);
+        assertNotNull(chatController.sendChatMessage(chatMessageDto));
     }
 
     @Test
@@ -35,6 +36,6 @@ class ChatControllerTest {
         ChatMessageDto chatMessageDto = new ChatMessageDto();
         SimpMessageHeaderAccessor headerAccessor = Mockito.mock(SimpMessageHeaderAccessor.class);
         Mockito.when(channelTopic.getTopic()).thenReturn("addUser");
-        chatController.addUser(chatMessageDto, headerAccessor);
+        assertNotNull(chatController.addUser(chatMessageDto, headerAccessor));
     }
 }
