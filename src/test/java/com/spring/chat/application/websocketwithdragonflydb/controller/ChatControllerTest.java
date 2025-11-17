@@ -4,8 +4,11 @@ import com.spring.chat.application.websocketwithdragonflydb.dto.ChatMessageDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 
 
@@ -15,10 +18,15 @@ class ChatControllerTest {
     @InjectMocks
     ChatController chatController;
 
+    @Mock
+    ChannelTopic channelTopic;
+    @Mock
+    RedisTemplate<String, Object> redisTemplate;
 
     @Test
     void sendChatMessage() {
         ChatMessageDto chatMessageDto = new ChatMessageDto();
+        Mockito.when(channelTopic.getTopic()).thenReturn("sendChatMessage");
         chatController.sendChatMessage(chatMessageDto);
     }
 
@@ -26,6 +34,7 @@ class ChatControllerTest {
     void addUser() {
         ChatMessageDto chatMessageDto = new ChatMessageDto();
         SimpMessageHeaderAccessor headerAccessor = Mockito.mock(SimpMessageHeaderAccessor.class);
+        Mockito.when(channelTopic.getTopic()).thenReturn("addUser");
         chatController.addUser(chatMessageDto, headerAccessor);
     }
 }
