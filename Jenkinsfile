@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         DOCKER_REGISTRY = 'docker.io'                       // Docker registry
-        DOCKER_IMAGE = 'kapilan1998/chat-image'            // Docker image name
+        DOCKER_IMAGE = 'kapilan1998/private-kapilan-repo'            // Docker image name
         IMAGE_TAG = '1.0'                                  // Docker image tag
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'    // Docker Hub credentials
     }
